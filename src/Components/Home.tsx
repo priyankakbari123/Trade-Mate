@@ -48,8 +48,11 @@ export default function Home() {
   ];
   const buySellIndicators = [
     { timestamp: Date.parse("2016-01-05"), action: "buy", price: 110 },
-    { timestamp: Date.parse("2016-01-10"), action: "sell", price: 160 },
     { timestamp: Date.parse("2016-01-09"), action: "buy", price: 150 },
+    { timestamp: Date.parse("2016-01-10"), action: "sell", price: 160 },
+    { timestamp: Date.parse("2016-01-11"), action: "buy", price: 100 },
+    { timestamp: Date.parse("2016-01-17"), action: "sell", price: 160 },
+    { timestamp: Date.parse("2016-04-14"), action: "sell", price: 130 },
   ];
   return (
     <div style={{ margin: "30px" }}>
