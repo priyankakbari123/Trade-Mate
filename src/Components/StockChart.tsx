@@ -1,8 +1,20 @@
 import { HighchartsReact } from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
+import { useState } from "react";
 
 export default function StockChart(props: any) {
   const { data, buySellIndicators } = props;
+  // const [showFlags, setShowFlags] = useState(false); //display flags when showFlags is true
+
+  // Initialize state for controlling the displayed flags
+  const [displayedFlags, setDisplayedFlags] = useState<number>(0);
+
+  // Filter the data based on the latest flag clicked
+  const filteredData = data.filter(
+    (item: any) => item.timestamp <= buySellIndicators[displayedFlags].timestamp
+  );
+  const filterIndicators = buySellIndicators.slice(0, displayedFlags + 1);
+
   const chartOptions = {
     title: {
       text: "Stock Chart",
@@ -14,12 +26,19 @@ export default function StockChart(props: any) {
       {
         type: "line",
         name: "Stock Price",
-        data: data.map((item: any) => [item.timestamp, item.price]),
+        data: filteredData.map((item: any) => [item.timestamp, item.price]),
+        color: "red",
       },
+      // {
+      //   type: "line",
+      //   name: "new stock Stock Price",
+      //   data: data.map((item: any) => [item.timestamp, item.price + 20]),
+      //   color: "blue",
+      // },
       {
         type: "flags",
         // name: "Buy/Sell Indicators",
-        data: buySellIndicators.map((indicator: any) => ({
+        data: filterIndicators.map((indicator: any) => ({
           x: indicator.timestamp,
           y: indicator.price,
           title: indicator.action.toUpperCase(),
@@ -29,7 +48,9 @@ export default function StockChart(props: any) {
         })),
         onSeries: "Stock Price",
         shape: "squarepin",
-        width: 40,      },
+        width: 20,
+        // visible: showFlags,
+      },
     ],
     xAxis: {
       type: "datetime",
@@ -43,97 +64,58 @@ export default function StockChart(props: any) {
       },
     },
     rangeSelector: {
-      // buttons: [
-      //   {
-      //     type: "day",
-      //     count: 1,
-      //     text: "1d",
-      //   },
-      //   {
-      //     type: "week",
-      //     count: 1,
-      //     text: "1w",
-      //   },
-      //   {
-      //     type: "month",
-      //     count: 1,
-      //     text: "1m",
-      //   },
-      //   {
-      //     type: "all",
-      //     text: "All",
-      //   },
-      // ],
-      // buttonTheme: {
-      //   width: 60,
-      //   height: 20,
-      //   stroke: "silver",
-      //   strokeWidth: 1,
-      //   fill: {
-      //     linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-      //     stops: [
-      //       [0.4, "#fff"],
-      //       [0.6, "#e0e0e0"],
-      //     ],
-      //   },
-      //   style: {
-      //     color: "#333",
-      //     fontWeight: "bold",
-      //   },
-      //   states: {
-      //     hover: {
-      //       fill: {
-      //         linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-      //         stops: [
-      //           [0.4, "#e0e0e0"],
-      //           [0.6, "#fff"],
-      //         ],
-      //       },
-      //       style: {
-      //         color: "black",
-      //       },
-      //     },
-      //     select: {
-      //       fill: {
-      //         linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-      //         stops: [
-      //           [0.1, "#c0c0c0"],
-      //           [0.3, "#e0e0e0"],
-      //         ],
-      //       },
-      //       style: {
-      //         color: "black",
-      //       },
-      //     },
-      //   },
-      // },
       allButtonsEnabled: true,
       enabled: true,
       buttonTheme: "responsive",
       buttons: [
-        {
-          type: "day",
-          count: 1,
-          text: "1D",
-        },
+        // {
+        //   type: "day",
+        //   count: 1,
+        //   text: "1D",
+        // },
         {
           type: "month",
           count: 1,
           text: "1M",
         },
-        {
-          type: "week",
-          count: 1,
-          text: "1W",
-        },
+        // {
+        //   type: "week",
+        //   count: 1,
+        //   text: "1W",
+        // },
         {
           type: "all",
           text: "All",
+        },
+        {
+          type: "all",
+          text: "BUY/SELL",
+          // events: {
+          //   click: function () {
+          //     setShowFlags(true);
+          //   },
+          // },
         },
       ],
       inputEnabled: true,
       selected: 3, // Default to showing all data
     },
   };
-  return <HighchartsReact highcharts={Highcharts} options={chartOptions} />;
+
+  const handleButtonClick = () => {
+    setDisplayedFlags(displayedFlags + 1);
+  };
+  return (
+    <>
+      <HighchartsReact highcharts={Highcharts} options={chartOptions} />
+      <div>
+        <button onClick={() => handleButtonClick()}>Display Next</button>
+      </div>
+    </>
+  );
 }
+// {buySellIndicators.map((indicator: any, index: number) => (
+//   <button key={index} onClick={() => handleButtonClick(index)}>
+//     Show till Flag {index + 1}
+//   </button>
+// ))}
