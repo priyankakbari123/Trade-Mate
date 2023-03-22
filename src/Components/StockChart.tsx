@@ -29,8 +29,7 @@ export default function StockChart(props: any) {
         })),
         onSeries: "Stock Price",
         shape: "squarepin",
-        width: 50,
-      },
+        width: 40,      },
     ],
     xAxis: {
       type: "datetime",
